@@ -35,7 +35,7 @@ class CampaignUpdate(BaseModel):
 async def list_campaigns(db: Session = Depends(get_db)):
     """List all campaigns."""
     campaigns = db.query(Campaign).order_by(Campaign.created_at.desc()).all()
-    return [c.to_dict() for c in campaigns]
+    return [c.to_dict(include_counts=True) for c in campaigns]
 
 
 @router.post("")

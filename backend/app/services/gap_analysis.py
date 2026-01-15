@@ -123,12 +123,12 @@ async def analyze_gaps(campaign: Campaign, db: Session, force_refresh: bool = Fa
         documents_summary=documents_summary
     )
     
-    # Call Claude
+    # Call Claude Opus for analytics
     client = Anthropic(api_key=settings.anthropic_api_key)
     
     try:
         response = client.messages.create(
-            model=settings.claude_model,
+            model=settings.claude_opus_model,
             max_tokens=2000,
             messages=[
                 {

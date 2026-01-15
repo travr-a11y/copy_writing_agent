@@ -7,8 +7,8 @@ interface CampaignCardProps {
 }
 
 export default function CampaignCard({ campaign }: CampaignCardProps) {
-  const docCount = campaign.documents?.length ?? 0
-  const variantCount = campaign.variants?.length ?? 0
+  const docCount = campaign.document_count ?? campaign.documents?.length ?? 0
+  const variantCount = campaign.variant_count ?? campaign.variants?.length ?? 0
   const createdDate = new Date(campaign.created_at).toLocaleDateString('en-AU', {
     day: 'numeric',
     month: 'short',

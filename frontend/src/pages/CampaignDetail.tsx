@@ -115,29 +115,30 @@ export default function CampaignDetail() {
         <div className="flex items-center gap-3">
           {campaign.variants && campaign.variants.length > 0 && (
             <div className="relative inline-block">
-              <button
-                onClick={() => {
-                  const url = exportApi.campaignCsv(campaign.id, exportMode === 'starred' ? { starred: true } : undefined)
-                  window.open(url, '_blank')
-                }}
-                disabled={exportMode === 'starred' && starredCount === 0}
-                className="flex items-center gap-2 px-4 py-2 pr-20 bg-surface-light border border-surface-lighter text-white font-medium rounded-xl hover:border-zinc-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Download className="w-4 h-4" />
-                Export CSV
-              </button>
-              <select
-                value={exportMode}
-                onChange={(e) => setExportMode(e.target.value as 'all' | 'starred')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-xs bg-surface border border-surface-lighter rounded px-2 py-1 text-white focus:border-accent-electric cursor-pointer"
-                onClick={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-              >
-                <option value="all">All</option>
-                <option value="starred" disabled={starredCount === 0}>
-                  Starred {starredCount > 0 && `(${starredCount})`}
-                </option>
-              </select>
+              <div className="flex items-center gap-0">
+                <button
+                  onClick={() => {
+                    const url = exportApi.campaignCsv(campaign.id, exportMode === 'starred' ? { starred: true } : undefined)
+                    window.open(url, '_blank')
+                  }}
+                  disabled={exportMode === 'starred' && starredCount === 0}
+                  className="flex items-center gap-2 px-4 py-2 bg-surface-light border border-surface-lighter border-r-0 text-white font-medium rounded-l-xl hover:border-zinc-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+                <select
+                  value={exportMode}
+                  onChange={(e) => setExportMode(e.target.value as 'all' | 'starred')}
+                  className="px-3 py-2 bg-surface-light border border-surface-lighter border-l-0 text-sm text-white rounded-r-xl hover:border-zinc-600 focus:border-accent-electric focus:outline-none cursor-pointer transition-all"
+                  style={{ minWidth: '100px' }}
+                >
+                  <option value="all">All</option>
+                  <option value="starred" disabled={starredCount === 0}>
+                    Starred {starredCount > 0 && `(${starredCount})`}
+                  </option>
+                </select>
+              </div>
             </div>
           )}
           <button

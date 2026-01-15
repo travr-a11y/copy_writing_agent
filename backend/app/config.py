@@ -25,7 +25,8 @@ class Settings(BaseSettings):
     backend_port: int = 8000
     
     # LLM Settings
-    claude_model: str = "claude-sonnet-4-20250514"
+    claude_model: str = "claude-sonnet-4-20250514"  # Writing
+    claude_opus_model: str = "claude-opus-4-20250514"  # Analytics
     max_tokens: int = 4096
     
     # QA Constraints

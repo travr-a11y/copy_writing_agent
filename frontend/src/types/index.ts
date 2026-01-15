@@ -8,6 +8,8 @@ export interface Campaign {
   brief: string | null
   created_at: string
   updated_at: string
+  document_count?: number
+  variant_count?: number
   documents?: Document[]
   variants?: Variant[]
 }

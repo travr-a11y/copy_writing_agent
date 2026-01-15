@@ -34,9 +34,9 @@ class Campaign(Base):
     documents = relationship("Document", back_populates="campaign", cascade="all, delete-orphan")
     variants = relationship("Variant", back_populates="campaign", cascade="all, delete-orphan")
     
-    def to_dict(self):
+    def to_dict(self, include_counts: bool = False):
         """Convert to dictionary."""
-        return {
+        result = {
             "id": self.id,
             "name": self.name,
             "icp": self.icp,
@@ -46,3 +46,9 @@ class Campaign(Base):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
+        
+        if include_counts:
+            result["document_count"] = len(self.documents) if self.documents else 0
+            result["variant_count"] = len(self.variants) if self.variants else 0
+        
+        return result
