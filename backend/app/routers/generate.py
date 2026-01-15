@@ -68,7 +68,7 @@ async def create_chunk_variant(
     request: ChunkRequest,
     db: Session = Depends(get_db)
 ):
-    """Generate a chunk up or chunk down version of a variant."""
+    """Generate a chunk up or chunk down version of a variant. If chunking a lead, also chunks its paired follow-up."""
     if request.direction not in ["up", "down"]:
         raise HTTPException(status_code=400, detail="Direction must be 'up' or 'down'")
     
@@ -84,6 +84,22 @@ async def create_chunk_variant(
     
     try:
         chunk_variant = await generate_chunk_variant(variant, request.direction, db)
+        
+        # If chunking a lead, also chunk its paired follow-up
+        if variant.touch == "lead":
+            followup = db.query(Variant).filter(
+                Variant.lead_variant_id == variant.id,
+                Variant.touch == "followup",
+                Variant.chunk == "base"
+            ).first()
+            
+            if followup:
+                followup_chunk = await generate_chunk_variant(followup, request.direction, db)
+                return {
+                    "lead": chunk_variant.to_dict(),
+                    "followup": followup_chunk.to_dict()
+                }
+        
         return chunk_variant.to_dict()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

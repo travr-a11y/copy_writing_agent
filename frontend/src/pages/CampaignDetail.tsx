@@ -15,9 +15,10 @@ import { campaignApi, generateApi, exportApi } from '../api/client'
 import DocumentUploader from '../components/DocumentUploader'
 import VariantCard from '../components/VariantCard'
 import GapAnalysis from '../components/GapAnalysis'
+import CampaignSettings from '../components/CampaignSettings'
 import type { Variant } from '../types'
 
-type Tab = 'documents' | 'variants'
+type Tab = 'documents' | 'variants' | 'settings'
 type FilterTouch = 'all' | 'lead' | 'followup'
 type FilterChunk = 'all' | 'base' | 'up' | 'down'
 type FilterStarred = 'all' | 'starred'
@@ -243,6 +244,17 @@ export default function CampaignDetail() {
           <MessageSquare className="w-4 h-4" />
           Variants
         </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`flex items-center gap-2 px-4 py-3 border-b-2 transition-all ${
+            activeTab === 'settings'
+              ? 'border-accent-electric text-white'
+              : 'border-transparent text-zinc-500 hover:text-white'
+          }`}
+        >
+          <span className="text-sm">⚙️</span>
+          Settings
+        </button>
       </div>
 
       {/* Tab content */}
@@ -267,6 +279,8 @@ export default function CampaignDetail() {
             }}
           />
         </div>
+      ) : activeTab === 'settings' ? (
+        <CampaignSettings campaign={campaign} campaignId={campaign.id} />
       ) : (
         <div>
           {/* Filters */}

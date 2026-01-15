@@ -85,7 +85,7 @@ async def update_campaign(
     campaign_update: CampaignUpdate,
     db: Session = Depends(get_db)
 ):
-    """Update campaign details."""
+    """Update campaign details and regenerate context document."""
     campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
@@ -96,6 +96,31 @@ async def update_campaign(
     
     db.commit()
     db.refresh(campaign)
+    
+        # Regenerate campaign context document if any fields were updated
+        if update_data:
+            from app.models.document import Document
+            from app.services.caching import invalidate
+            
+            # Delete existing campaign_context document
+            existing_context = db.query(Document).filter(
+                Document.campaign_id == campaign.id,
+                Document.doc_type == "campaign_context"
+            ).first()
+            
+            if existing_context:
+                db.delete(existing_context)
+                db.commit()
+            
+            # Create new context document
+            try:
+                await create_campaign_context_document(campaign, db)
+                # Invalidate gap analysis cache since context changed
+                invalidate(db, f"gap_analysis_{campaign.id}")
+            except Exception as e:
+                # Log error but don't fail the update
+                print(f"Warning: Failed to regenerate context document: {e}")
+    
     return campaign.to_dict()
 
 
