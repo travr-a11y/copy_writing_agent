@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import campaigns, documents, generate, export
+from app.routers import campaigns, documents, generate, export, offers, icps
 
 
 settings = get_settings()
@@ -44,6 +44,8 @@ app.include_router(campaigns.router, prefix="/api/campaigns", tags=["Campaigns"]
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(generate.router, prefix="/api", tags=["Generate"])
 app.include_router(export.router, prefix="/api", tags=["Export"])
+app.include_router(offers.router, prefix="/api/offers", tags=["Offers"])
+app.include_router(icps.router, prefix="/api/icps", tags=["ICPs"])
 
 
 @app.get("/api/health")
