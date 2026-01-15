@@ -8,6 +8,7 @@ from app.database import get_db
 from app.models.campaign import Campaign
 from app.services.auto_context import create_campaign_context_document
 from app.services.gap_analysis import analyze_gaps
+from app.services.research import research_pain_points
 
 
 router = APIRouter()
@@ -152,6 +153,60 @@ async def analyze_campaign_gaps(
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Gap analysis failed: {str(e)}")
+
+
+@router.post("/{campaign_id}/research/pain-points")
+async def research_campaign_pain_points(
+    campaign_id: str,
+    query: str = Query(..., description="Research query"),
+    provider: str = Query(..., description="Research provider: 'gemini' or 'perplexity'"),
+    db: Session = Depends(get_db)
+):
+    """Research pain points using Gemini or Perplexity."""
+    campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    if provider not in ["gemini", "perplexity"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Provider must be 'gemini' or 'perplexity'"
+        )
+    
+    try:
+        result = await research_pain_points(campaign, query, provider, db)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Research failed: {str(e)}")
+
+
+@router.post("/{campaign_id}/research/pain-points")
+async def research_campaign_pain_points(
+    campaign_id: str,
+    query: str = Query(..., description="Research query"),
+    provider: str = Query(..., description="Research provider: 'gemini' or 'perplexity'"),
+    db: Session = Depends(get_db)
+):
+    """Research pain points using Gemini or Perplexity."""
+    campaign = db.query(Campaign).filter(Campaign.id == campaign_id).first()
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    
+    if provider not in ["gemini", "perplexity"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Provider must be 'gemini' or 'perplexity'"
+        )
+    
+    try:
+        result = await research_pain_points(campaign, query, provider, db)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Research failed: {str(e)}")
 
 
 @router.post("/migrate-context")

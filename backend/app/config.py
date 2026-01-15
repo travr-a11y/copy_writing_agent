@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     
     # API Keys
     anthropic_api_key: str
+    gemini_api_key: str | None = None
+    perplexity_api_key: str | None = None
     
     # Paths
     chroma_persist_path: str = "./data/chroma"
@@ -27,6 +29,8 @@ class Settings(BaseSettings):
     # LLM Settings
     claude_model: str = "claude-sonnet-4-20250514"  # Writing
     claude_opus_model: str = "claude-opus-4-20250514"  # Analytics
+    gemini_model: str = "gemini-2.0-flash"  # Research
+    perplexity_model: str = "sonar-pro"  # Research
     max_tokens: int = 4096
     
     # QA Constraints
