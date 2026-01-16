@@ -10,7 +10,7 @@ interface TagSuggestModalProps {
   onClose: () => void
 }
 
-const DOC_TYPES = ['voice', 'voc', 'campaign_context']
+const DOC_TYPES: Array<'voice' | 'voc' | 'campaign_context' | 'voc_research' | 'research_report' | null> = ['voice', 'voc', 'campaign_context', 'voc_research', 'research_report']
 const CHANNELS = ['email', 'linkedin', 'call']
 
 export default function TagSuggestModal({
@@ -20,20 +20,21 @@ export default function TagSuggestModal({
   onApply,
   onClose,
 }: TagSuggestModalProps) {
-  const [tags, setTags] = useState({
-    doc_type: document.doc_type || '',
-    channel: document.channel || '',
-    industry: document.industry || '',
-    role: document.role || '',
+  const [tags, setTags] = useState<Partial<Document>>({
+    doc_type: document.doc_type || null,
+    channel: document.channel || null,
+    industry: document.industry || null,
+    role: document.role || null,
   })
 
   useEffect(() => {
     if (suggestions) {
+      const docType = suggestions.doc_type as Document['doc_type']
       setTags({
-        doc_type: suggestions.doc_type || '',
-        channel: suggestions.channel || '',
-        industry: suggestions.industry || '',
-        role: suggestions.role || '',
+        doc_type: docType || null,
+        channel: suggestions.channel || null,
+        industry: suggestions.industry || null,
+        role: suggestions.role || null,
       })
     }
   }, [suggestions])
@@ -79,9 +80,9 @@ export default function TagSuggestModal({
                   Document Type
                 </label>
                 <div className="flex gap-2">
-                  {DOC_TYPES.map((type) => (
+                  {DOC_TYPES.filter(t => t).map((type) => (
                     <button
-                      key={type}
+                      key={type || 'null'}
                       onClick={() => setTags({ ...tags, doc_type: type })}
                       className={`px-3 py-2 text-sm rounded-lg border transition-all ${
                         tags.doc_type === type
@@ -89,7 +90,7 @@ export default function TagSuggestModal({
                           : 'bg-surface border-surface-lighter text-zinc-400 hover:border-zinc-600'
                       }`}
                     >
-                      {type}
+                      {type || 'None'}
                     </button>
                   ))}
                 </div>
@@ -124,8 +125,8 @@ export default function TagSuggestModal({
                 </label>
                 <input
                   type="text"
-                  value={tags.industry}
-                  onChange={(e) => setTags({ ...tags, industry: e.target.value })}
+                  value={tags.industry || ''}
+                  onChange={(e) => setTags({ ...tags, industry: e.target.value || null })}
                   placeholder="e.g., construction, logistics"
                   className="w-full px-4 py-2 bg-surface border border-surface-lighter rounded-lg text-white placeholder-zinc-600 focus:border-accent-electric"
                 />
@@ -138,8 +139,8 @@ export default function TagSuggestModal({
                 </label>
                 <input
                   type="text"
-                  value={tags.role}
-                  onChange={(e) => setTags({ ...tags, role: e.target.value })}
+                  value={tags.role || ''}
+                  onChange={(e) => setTags({ ...tags, role: e.target.value || null })}
                   placeholder="e.g., owner, director"
                   className="w-full px-4 py-2 bg-surface border border-surface-lighter rounded-lg text-white placeholder-zinc-600 focus:border-accent-electric"
                 />

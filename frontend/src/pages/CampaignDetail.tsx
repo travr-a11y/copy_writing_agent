@@ -16,6 +16,7 @@ import DocumentUploader from '../components/DocumentUploader'
 import VariantCard from '../components/VariantCard'
 import GapAnalysis from '../components/GapAnalysis'
 import CampaignSettings from '../components/CampaignSettings'
+import LegacyUpgradeBanner from '../components/LegacyUpgradeBanner'
 import type { Variant } from '../types'
 
 type Tab = 'documents' | 'variants' | 'settings'
@@ -203,11 +204,14 @@ export default function CampaignDetail() {
         </div>
       </div>
 
+      {/* Legacy Upgrade Banner */}
+      {campaign && <LegacyUpgradeBanner campaign={campaign} />}
+
       {/* Gap Analysis - Always Visible */}
       {id && (
         <GapAnalysis
           campaignId={id}
-          onUploadClick={(category, docType) => {
+          onUploadClick={(_category, docType) => {
             // Switch to documents tab and set pre-selected doc type
             setActiveTab('documents')
             setPreSelectedDocType(docType)

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Campaign, CampaignCreate, Document, Variant, TagSuggestion, GenerateResponse, GapAnalysis } from '../types'
+import type { Campaign, CampaignCreate, Document, Variant, TagSuggestion, GenerateResponse, GapAnalysis, ICPResearchResponse, VOCResearchResponse, RefineResearchResponse, ResearchHistoryResponse, ResearchDiffResponse } from '../types'
 
 const api = axios.create({
   baseURL: '/api',
@@ -41,6 +41,66 @@ export const campaignApi = {
 
   migrateContext: async (): Promise<{ status: string; migrated: number; skipped: number }> => {
     const { data } = await api.post('/campaigns/migrate-context')
+    return data
+  },
+
+  researchICP: async (
+    campaignId: string,
+    industry: string,
+    geography: string = 'Australia',
+    serviceOffering: string = '',
+    additionalContext: string = ''
+  ): Promise<ICPResearchResponse> => {
+    const params = new URLSearchParams()
+    params.append('industry', industry)
+    params.append('geography', geography)
+    if (serviceOffering) params.append('service_offering', serviceOffering)
+    if (additionalContext) params.append('additional_context', additionalContext)
+    const { data } = await api.post(`/campaigns/${campaignId}/research/icp?${params}`)
+    return data
+  },
+
+  researchVOC: async (
+    campaignId: string,
+    icpSummary: string,
+    competitors: string = '',
+    platformsPriority: string = '',
+    additionalContext: string = ''
+  ): Promise<VOCResearchResponse> => {
+    const params = new URLSearchParams()
+    params.append('icp_summary', icpSummary)
+    if (competitors) params.append('competitors', competitors)
+    if (platformsPriority) params.append('platforms_priority', platformsPriority)
+    if (additionalContext) params.append('additional_context', additionalContext)
+    const { data } = await api.post(`/campaigns/${campaignId}/research/voice?${params}`)
+    return data
+  },
+
+  refineResearch: async (
+    campaignId: string,
+    additionalLearnings: string,
+    refineICP: boolean = true,
+    refineVOC: boolean = true
+  ): Promise<RefineResearchResponse> => {
+    const params = new URLSearchParams()
+    params.append('additional_learnings', additionalLearnings)
+    params.append('refine_icp', String(refineICP))
+    params.append('refine_voc', String(refineVOC))
+    const { data } = await api.post(`/campaigns/${campaignId}/research/refine?${params}`)
+    return data
+  },
+
+  getResearchHistory: async (campaignId: string): Promise<ResearchHistoryResponse> => {
+    const { data } = await api.get(`/campaigns/${campaignId}/research/history`)
+    return data
+  },
+
+  getResearchDiff: async (
+    campaignId: string,
+    v1: number,
+    v2: number
+  ): Promise<ResearchDiffResponse> => {
+    const { data } = await api.get(`/campaigns/${campaignId}/research/diff?v1=${v1}&v2=${v2}`)
     return data
   },
 }
@@ -135,6 +195,54 @@ export const variantApi = {
 }
 
 // Export endpoints
+// Offer endpoints
+export const offerApi = {
+  list: async (campaignId?: string): Promise<any[]> => {
+    const params = campaignId ? `?campaign_id=${campaignId}` : ''
+    const { data } = await api.get(`/offers${params}`)
+    return data
+  },
+  get: async (id: string): Promise<any> => {
+    const { data } = await api.get(`/offers/${id}`)
+    return data
+  },
+  create: async (offer: any): Promise<any> => {
+    const { data } = await api.post('/offers', offer)
+    return data
+  },
+  update: async (id: string, offer: Partial<any>): Promise<any> => {
+    const { data } = await api.put(`/offers/${id}`, offer)
+    return data
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/offers/${id}`)
+  },
+}
+
+// ICP endpoints
+export const icpApi = {
+  list: async (campaignId?: string): Promise<any[]> => {
+    const params = campaignId ? `?campaign_id=${campaignId}` : ''
+    const { data } = await api.get(`/icps${params}`)
+    return data
+  },
+  get: async (id: string): Promise<any> => {
+    const { data } = await api.get(`/icps/${id}`)
+    return data
+  },
+  create: async (icp: any): Promise<any> => {
+    const { data } = await api.post('/icps', icp)
+    return data
+  },
+  update: async (id: string, icp: Partial<any>): Promise<any> => {
+    const { data } = await api.put(`/icps/${id}`, icp)
+    return data
+  },
+  delete: async (id: string): Promise<void> => {
+    await api.delete(`/icps/${id}`)
+  },
+}
+
 export const exportApi = {
   campaignCsv: (campaignId: string, filters?: { touch?: string; chunk?: string; qa_pass?: boolean; starred?: boolean }): string => {
     const params = new URLSearchParams()
