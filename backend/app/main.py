@@ -1,6 +1,10 @@
 """FastAPI application entry point."""
-from fastapi import FastAPI
+import os
+from pathlib import Path
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
@@ -10,17 +14,17 @@ from app.routers import campaigns, documents, generate, export
 
 settings = get_settings()
 
+FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
-    # Startup
-    print("🚀 Starting AU Email Copy Drafting System...")
+    print("Starting AU Email Copy Drafting System...")
     init_db()
-    print("✅ Database initialized")
+    print("Database initialized")
     yield
-    # Shutdown
-    print("👋 Shutting down...")
+    print("Shutting down...")
 
 
 app = FastAPI(
@@ -30,10 +34,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        os.getenv("RAILWAY_PUBLIC_DOMAIN", ""),
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -56,6 +63,19 @@ async def health_check():
 async def schema_version():
     """Get current schema version for Chroma compatibility."""
     return {"schema_version": 1, "csv_version": 1}
+
+
+# Serve frontend static files in production
+if FRONTEND_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="static")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(request: Request, full_path: str):
+        """Serve the SPA index.html for all non-API routes."""
+        file_path = FRONTEND_DIR / full_path
+        if file_path.is_file():
+            return FileResponse(str(file_path))
+        return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 
 if __name__ == "__main__":

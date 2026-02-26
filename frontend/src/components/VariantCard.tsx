@@ -26,7 +26,7 @@ export default function VariantCard({ variant, linkedVariant, campaignId }: Vari
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (variantId?: string) => variantApi.delete(variantId || variant.id),
+    mutationFn: (variantId: string) => variantApi.delete(variantId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['campaign', campaignId] })
       if (linkedVariant) {
@@ -175,7 +175,7 @@ export default function VariantCard({ variant, linkedVariant, campaignId }: Vari
             <Star className={`w-4 h-4 ${variant.starred ? 'fill-current' : ''}`} />
           </button>
           <button
-            onClick={() => deleteMutation.mutate()}
+            onClick={() => deleteMutation.mutate(variant.id)}
             className="p-2 text-zinc-500 hover:text-accent-coral hover:bg-accent-coral/10 rounded-lg transition-colors"
             title="Delete"
           >

@@ -207,7 +207,7 @@ export default function CampaignDetail() {
       {id && (
         <GapAnalysis
           campaignId={id}
-          onUploadClick={(category, docType) => {
+          onUploadClick={(_category, docType) => {
             // Switch to documents tab and set pre-selected doc type
             setActiveTab('documents')
             setPreSelectedDocType(docType)

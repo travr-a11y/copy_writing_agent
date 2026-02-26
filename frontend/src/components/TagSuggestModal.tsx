@@ -158,7 +158,13 @@ export default function TagSuggestModal({
               Cancel
             </button>
             <button
-              onClick={() => onApply(tags)}
+              onClick={() => onApply({
+                ...tags,
+                doc_type: (tags.doc_type as Document['doc_type']) || null,
+                channel: tags.channel || null,
+                industry: tags.industry || null,
+                role: tags.role || null,
+              })}
               disabled={!tags.doc_type}
               className="flex items-center gap-2 px-4 py-2 bg-accent-electric text-surface-dark font-medium text-sm rounded-lg hover:bg-accent-electric/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
