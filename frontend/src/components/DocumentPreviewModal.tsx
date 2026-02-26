@@ -19,11 +19,11 @@ export default function DocumentPreviewModal({ document, isOpen, onClose }: Docu
       setIsLoading(true)
       setError(null)
       documentApi.getContent(document.id)
-        .then((data) => {
+        .then((data: { content: string }) => {
           setContent(data.content || '')
           setIsLoading(false)
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           setError(err.message || 'Failed to load document content')
           setIsLoading(false)
         })

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { History, GitCompare, Loader2, ChevronRight, Calendar, ChevronDown, Download, Eye } from 'lucide-react'
+import { History, GitCompare, Loader2, ChevronRight, Calendar, ChevronDown, Download } from 'lucide-react'
 import { campaignApi, documentApi } from '../api/client'
 import type { ResearchHistoryResponse, ResearchHistoryEntry, ResearchDiffResponse } from '../types'
 

@@ -11,9 +11,9 @@ interface CampaignSettingsProps {
 
 export default function CampaignSettings({ campaign, campaignId }: CampaignSettingsProps) {
   const queryClient = useQueryClient()
-  const [icp, setIcp] = useState(campaign.icp)
-  const [painPoints, setPainPoints] = useState(campaign.pain_points)
-  const [offer, setOffer] = useState(campaign.offer)
+  const [icp, setIcp] = useState(campaign.icp ?? '')
+  const [painPoints, setPainPoints] = useState(campaign.pain_points ?? '')
+  const [offer, setOffer] = useState(campaign.offer ?? '')
   const [brief, setBrief] = useState(campaign.brief || '')
 
   const updateMutation = useMutation({

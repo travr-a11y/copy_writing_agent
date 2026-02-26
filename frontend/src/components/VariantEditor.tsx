@@ -19,7 +19,7 @@ const AVAILABLE_VARIABLES = [
 
 export default function VariantEditor({ variant, campaignId, onClose }: VariantEditorProps) {
   const [body, setBody] = useState(variant.body)
-  const [cursorPosition, setCursorPosition] = useState(0)
+  const [_cursorPosition, setCursorPosition] = useState(0)
   const queryClient = useQueryClient()
 
   const updateMutation = useMutation({

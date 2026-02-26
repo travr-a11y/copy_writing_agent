@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { X, Sparkles, Loader2 } from 'lucide-react'
-import { generateApi } from '../api/client'
 
 interface GenerationSidePanelProps {
   campaignId: string

@@ -10,7 +10,7 @@ interface TagSuggestModalProps {
   onClose: () => void
 }
 
-const DOC_TYPES = ['voice', 'voc', 'campaign_context']
+const DOC_TYPES: Document['doc_type'][] = ['company_voice', 'voice_of_customer', 'call_transcript', 'research', 'campaign_context']
 const CHANNELS = ['email', 'linkedin', 'call']
 
 export default function TagSuggestModal({
@@ -158,10 +158,7 @@ export default function TagSuggestModal({
               Cancel
             </button>
             <button
-              onClick={() => onApply({
-                ...tags,
-                doc_type: tags.doc_type as 'voice' | 'voc' | 'campaign_context',
-              })}
+              onClick={() => onApply(tags)}
               disabled={!tags.doc_type}
               className="flex items-center gap-2 px-4 py-2 bg-accent-electric text-surface-dark font-medium text-sm rounded-lg hover:bg-accent-electric/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >

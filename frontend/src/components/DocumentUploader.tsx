@@ -346,7 +346,7 @@ export default function DocumentUploader({
       {/* Tag suggestion modal */}
       {suggestingDoc && (
         <TagSuggestModal
-          doc={suggestingDoc}
+          document={suggestingDoc}
           suggestions={suggestions}
           isLoading={suggestMutation.isPending}
           onApply={handleApplyTags}

@@ -204,9 +204,10 @@ export default function CampaignDetail() {
       </div>
 
       {/* Gap Analysis - Always Visible */}
-      {id && (
+      {id && campaign && (
         <GapAnalysis
           campaignId={id}
+          campaign={campaign}
           onUploadClick={(_category, docType) => {
             // Switch to documents tab and set pre-selected doc type
             setActiveTab('documents')

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import type { Campaign, CampaignCreate, CampaignUpdate, Document, Variant, TagSuggestion, GenerateResponse, GapAnalysis } from '../types'
+import type { Campaign, CampaignCreate, CampaignUpdate, Document, Variant, TagSuggestion, GenerateResponse, GapAnalysis, ICPResearchResponse, VOCResearchResponse, ResearchHistoryResponse, ResearchDiffResponse } from '../types'
 
 const api = axios.create({
   baseURL: '/api',
@@ -43,6 +43,58 @@ export const campaignApi = {
     const { data } = await api.post('/campaigns/migrate-context')
     return data
   },
+
+  researchICP: async (
+    campaignId: string,
+    industry: string,
+    geography: string,
+    serviceOffering: string,
+    additionalContext: string
+  ): Promise<ICPResearchResponse> => {
+    const { data } = await api.post(`/campaigns/${campaignId}/research/icp`, {
+      industry, geography, service_offering: serviceOffering, additional_context: additionalContext,
+    })
+    return data
+  },
+
+  researchVOC: async (
+    campaignId: string,
+    icpSummary: string,
+    competitors: string,
+    platformsPriority: string,
+    additionalContext: string
+  ): Promise<VOCResearchResponse> => {
+    const { data } = await api.post(`/campaigns/${campaignId}/research/voc`, {
+      icp_summary: icpSummary, competitors, platforms_priority: platformsPriority, additional_context: additionalContext,
+    })
+    return data
+  },
+
+  researchFull: async (
+    campaignId: string,
+    industry: string,
+    geography: string,
+    serviceOffering: string,
+    additionalContext: string,
+    competitors: string,
+    platformsPriority: string
+  ): Promise<ICPResearchResponse> => {
+    const { data } = await api.post(`/campaigns/${campaignId}/research/full`, {
+      industry, geography, service_offering: serviceOffering, additional_context: additionalContext,
+      competitors, platforms_priority: platformsPriority,
+    })
+    return data
+  },
+
+  getResearchHistory: async (campaignId: string): Promise<ResearchHistoryResponse> => {
+    const { data } = await api.get(`/campaigns/${campaignId}/research/history`)
+    return data
+  },
+
+  getResearchDiff: async (campaignId: string, v1: number, v2: number): Promise<ResearchDiffResponse> => {
+    const { data } = await api.get(`/campaigns/${campaignId}/research/diff?v1=${v1}&v2=${v2}`)
+    return data
+  },
 }
 
 // Document endpoints
@@ -78,6 +130,15 @@ export const documentApi = {
 
   delete: async (documentId: string): Promise<void> => {
     await api.delete(`/documents/${documentId}`)
+  },
+
+  getContent: async (documentId: string): Promise<{ content: string }> => {
+    const { data } = await api.get(`/documents/${documentId}/content`)
+    return data
+  },
+
+  downloadUrl: (documentId: string): string => {
+    return `/api/documents/${documentId}/download`
   },
 }
 
