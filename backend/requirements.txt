@@ -22,4 +22,6 @@ textstat==0.7.3
 # Utilities
 pydantic==2.5.3
 pydantic-settings==2.1.0
+uuid7==0.1.0
+aiofiles==23.2.1
 setuptools>=70.0.0,<71.0.0  # pkg_resources (used by textstat) removed in setuptools 71+
