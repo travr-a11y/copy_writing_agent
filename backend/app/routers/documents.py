@@ -35,6 +35,7 @@ class TagSuggestion(BaseModel):
     industry: Optional[str] = None
     role: Optional[str] = None
     confidence: float
+    reasoning: str = ""
 
 
 @router.post("/campaigns/{campaign_id}/upload")

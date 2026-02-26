@@ -1,5 +1,6 @@
 """Document ingestion: parsing, chunking, and embedding."""
 import os
+import re
 import uuid
 import csv
 import markdown
@@ -25,8 +26,6 @@ def read_file_content(file_path: str, file_type: str) -> str:
             md_content = f.read()
             # Convert markdown to plain text (strip formatting)
             html = markdown.markdown(md_content)
-            # Simple HTML to text (remove tags)
-            import re
             text = re.sub(r'<[^>]+>', ' ', html)
             return text
     

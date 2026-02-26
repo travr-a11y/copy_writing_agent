@@ -2,8 +2,6 @@
 import os
 from pathlib import Path
 from functools import lru_cache
-from pydantic import BaseModel
-
 try:
     from pydantic_settings import BaseSettings
 except ImportError:

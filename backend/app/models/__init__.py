@@ -2,7 +2,6 @@
 from app.models.campaign import Campaign
 from app.models.document import Document
 from app.models.variant import Variant
-from app.models.offer import Offer
-from app.models.icp import ICP
+from app.models.cache import Cache
 
-__all__ = ["Campaign", "Document", "Variant", "Offer", "ICP"]
+__all__ = ["Campaign", "Document", "Variant", "Cache"]

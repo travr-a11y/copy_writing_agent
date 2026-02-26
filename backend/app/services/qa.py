@@ -19,8 +19,8 @@ def get_readability_grade(text: str) -> float:
     """Get Flesch-Kincaid grade level."""
     try:
         return textstat.flesch_kincaid_grade(text)
-    except:
-        return 10.0  # Default high if calculation fails
+    except Exception:
+        return 10.0
 
 
 def check_comma_rule(text: str) -> List[str]:

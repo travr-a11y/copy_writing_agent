@@ -1,6 +1,9 @@
 """FastAPI application entry point."""
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 
 from app.config import get_settings
@@ -30,10 +33,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware for frontend
+# CORS middleware for frontend (dev + production domains)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origin_regex=r"https://.*\.(railway\.app|up\.railway\.app)",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,6 +63,12 @@ async def health_check():
 async def schema_version():
     """Get current schema version for Chroma compatibility."""
     return {"schema_version": 1, "csv_version": 1}
+
+
+# Serve frontend static files in production (when frontend/dist exists)
+_frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+if _frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(_frontend_dist), html=True), name="static")
 
 
 if __name__ == "__main__":

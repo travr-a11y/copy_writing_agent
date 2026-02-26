@@ -3,7 +3,6 @@ import json
 from datetime import datetime, timedelta
 from typing import Optional, Any, Dict
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from app.models.cache import Cache
 
