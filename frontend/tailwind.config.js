@@ -7,30 +7,34 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Bold modern palette
+        // Light minimalist palette (Frank Advisory)
         primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-          950: '#082f49',
+          DEFAULT: '#1e1645',  // Dark indigo (from design)
+          50: '#f5f5f7',
+          100: '#eaeaee',
+          200: '#d5d5dd',
+          300: '#b0b0bf',
+          400: '#8585a0',
+          500: '#5a5a7d',
+          600: '#3a3a5a',
+          700: '#2a2a4a',
+          800: '#1e1645',  // Dark indigo
+          900: '#151535',
         },
         accent: {
-          coral: '#FF6B6B',
-          electric: '#00D9FF',
-          lime: '#B8FF57',
+          green: '#88aa00',  // Vivid yellow-green (from design)
+          DEFAULT: '#88aa00',
         },
         surface: {
-          dark: '#0A0A0B',
-          DEFAULT: '#111113',
-          light: '#1A1A1D',
-          lighter: '#242428',
+          DEFAULT: '#ffffff',  // White background
+          light: '#f9f9fb',  // Light gray
+          gray: '#e5e5e5',  // Medium gray (from design)
+          dark: '#1e1645',  // Dark indigo for headers
+        },
+        text: {
+          DEFAULT: '#1e1645',  // Dark indigo for body text
+          light: '#5a5a7d',  // Lighter for secondary text
+          muted: '#8585a0',  // Muted for tertiary text
         }
       },
       fontFamily: {

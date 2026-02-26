@@ -13,7 +13,7 @@ export default function CampaignList() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 text-accent-electric animate-spin" />
+        <Loader2 className="w-8 h-8 text-accent-green animate-spin" />
       </div>
     )
   }
@@ -21,7 +21,7 @@ export default function CampaignList() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-400">Error loading campaigns</p>
+        <p className="text-red-600">Error loading campaigns</p>
       </div>
     )
   }
@@ -29,14 +29,17 @@ export default function CampaignList() {
   return (
     <div className="animate-fade-in">
       {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-primary font-display">Campaigns</h1>
+        <p className="text-text-light mt-1">Manage your email copy campaigns</p>
+        <div className="h-1 w-20 bg-accent-green mt-3"></div>
+      </div>
+
       <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white font-display">Campaigns</h1>
-          <p className="text-zinc-500 mt-1">Manage your email copy campaigns</p>
-        </div>
+        <div></div>
         <Link
           to="/campaigns/new"
-          className="flex items-center gap-2 px-5 py-2.5 bg-accent-electric text-surface-dark font-medium rounded-xl hover:bg-accent-electric/90 transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 bg-accent-green text-primary font-medium rounded-lg hover:bg-accent-green/90 transition-all"
         >
           <Plus className="w-5 h-5" />
           New Campaign
@@ -57,13 +60,13 @@ export default function CampaignList() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 bg-surface-light rounded-2xl border border-surface-lighter">
-          <FileText className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-white mb-2">No campaigns yet</h3>
-          <p className="text-zinc-500 mb-6">Create your first campaign to get started</p>
+        <div className="text-center py-16 bg-surface rounded-xl border border-surface-gray shadow-sm">
+          <FileText className="w-12 h-12 text-text-light mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-primary mb-2">No campaigns yet</h3>
+          <p className="text-text-light mb-6">Create your first campaign to get started</p>
           <Link
             to="/campaigns/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-electric text-surface-dark font-medium rounded-xl hover:bg-accent-electric/90 transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent-green text-primary font-medium rounded-lg hover:bg-accent-green/90 transition-all"
           >
             <Plus className="w-5 h-5" />
             Create Campaign

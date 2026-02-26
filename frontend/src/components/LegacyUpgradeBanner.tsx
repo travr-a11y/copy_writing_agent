@@ -96,10 +96,10 @@ export default function LegacyUpgradeBanner({ campaign }: LegacyUpgradeBannerPro
   }
 
   return (
-    <div className="bg-gradient-to-r from-accent-electric/20 to-blue-500/20 border border-accent-electric/50 rounded-xl p-6 mb-6 relative">
+    <div className="bg-gradient-to-r from-accent-green/20 to-blue-500/20 border border-accent-green/50 rounded-xl p-6 mb-6 relative bg-surface">
       <button
         onClick={handleDismiss}
-        className="absolute top-4 right-4 p-1 text-zinc-400 hover:text-white transition-colors"
+        className="absolute top-4 right-4 p-1 text-text-light hover:text-primary transition-colors"
         disabled={isUpgrading}
       >
         <X className="w-4 h-4" />
@@ -107,26 +107,26 @@ export default function LegacyUpgradeBanner({ campaign }: LegacyUpgradeBannerPro
 
       <div className="flex items-start gap-4">
         <div className="mt-1">
-          <Sparkles className="w-6 h-6 text-accent-electric" />
+          <Sparkles className="w-6 h-6 text-accent-green" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-bold text-white mb-2">
+          <h3 className="text-lg font-bold text-primary mb-2">
             Upgrade Your Campaign with AI Research
           </h3>
-          <p className="text-sm text-zinc-300 mb-4">
+          <p className="text-sm text-text-light mb-4">
             This campaign was created before our structured research features. Upgrade now to get:
           </p>
-          <ul className="space-y-2 mb-4 text-sm text-zinc-300">
+          <ul className="space-y-2 mb-4 text-sm text-text-light">
             <li className="flex items-start gap-2">
-              <span className="text-accent-electric mt-0.5">✓</span>
+              <span className="text-accent-green mt-0.5">✓</span>
               <span><strong>Structured ICP Definition</strong> - Detailed firmographics, buyer personas, and messaging angles</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-accent-electric mt-0.5">✓</span>
+              <span className="text-accent-green mt-0.5">✓</span>
               <span><strong>Voice of Customer Research</strong> - Real customer language, pain themes, and objections</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-accent-electric mt-0.5">✓</span>
+              <span className="text-accent-green mt-0.5">✓</span>
               <span><strong>Version History</strong> - Track research iterations and compare versions</span>
             </li>
           </ul>
@@ -134,7 +134,7 @@ export default function LegacyUpgradeBanner({ campaign }: LegacyUpgradeBannerPro
             <button
               onClick={handleUpgrade}
               disabled={isUpgrading || !campaign.industry}
-              className="flex items-center gap-2 px-5 py-2.5 bg-accent-electric text-surface-dark font-medium rounded-xl hover:bg-accent-electric/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 bg-accent-green text-primary font-medium rounded-lg hover:bg-accent-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isUpgrading ? (
                 <>
@@ -150,14 +150,14 @@ export default function LegacyUpgradeBanner({ campaign }: LegacyUpgradeBannerPro
               )}
             </button>
             {!campaign.industry && (
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-text-muted">
                 Add an industry in campaign settings to enable upgrade
               </p>
             )}
             <button
               onClick={handleDismiss}
               disabled={isUpgrading}
-              className="text-sm text-zinc-400 hover:text-white transition-colors disabled:opacity-50"
+              className="text-sm text-text-light hover:text-primary transition-colors disabled:opacity-50"
             >
               Dismiss
             </button>
@@ -166,8 +166,8 @@ export default function LegacyUpgradeBanner({ campaign }: LegacyUpgradeBannerPro
       </div>
 
       {upgradeMutation.isError && (
-        <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-          <p className="text-sm text-red-400">
+        <div className="mt-4 p-3 bg-red-100 border border-red-300 rounded-lg">
+          <p className="text-sm text-red-600">
             Upgrade failed. Please try again or contact support if the issue persists.
           </p>
         </div>

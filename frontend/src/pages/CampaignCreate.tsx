@@ -178,10 +178,10 @@ export default function CampaignCreate() {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                   index < currentStep
-                    ? 'bg-accent-electric text-surface-dark'
+                    ? 'bg-accent-green text-primary'
                     : index === currentStep
-                    ? 'bg-accent-electric/20 text-accent-electric border-2 border-accent-electric'
-                    : 'bg-surface-lighter text-zinc-600'
+                    ? 'bg-accent-green/20 text-accent-green border-2 border-accent-green'
+                    : 'bg-surface-gray text-text-light'
                 }`}
               >
                 {index < currentStep ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
@@ -189,7 +189,7 @@ export default function CampaignCreate() {
               {index < STEPS.length - 1 && (
                 <div
                   className={`w-12 h-0.5 mx-1 transition-colors ${
-                    index < currentStep ? 'bg-accent-electric' : 'bg-surface-lighter'
+                    index < currentStep ? 'bg-accent-green' : 'bg-surface-gray'
                   }`}
                 />
               )}
@@ -199,24 +199,25 @@ export default function CampaignCreate() {
       </div>
 
       {/* Form */}
-      <div className="bg-surface-light rounded-2xl border border-surface-lighter p-8">
+      <div className="bg-surface rounded-xl border border-surface-gray shadow-sm p-8">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <StepIcon className="w-6 h-6 text-accent-electric" />
-            <h2 className="text-2xl font-bold text-white font-display">{step.title}</h2>
+            <StepIcon className="w-6 h-6 text-accent-green" />
+            <h2 className="text-2xl font-bold text-primary font-display">{step.title}</h2>
           </div>
-          <p className="text-zinc-500">{step.description}</p>
+          <p className="text-text-light">{step.description}</p>
+          <div className="h-1 w-16 bg-accent-green mt-2"></div>
         </div>
 
         {/* Research Status (Step 5) */}
         {step.key === 'research' && (
           <div className="mb-6 space-y-4">
             {researchStatus.stage === 'idle' && (
-              <div className="bg-zinc-500/10 border border-zinc-500/30 rounded-lg p-4">
-                <p className="text-sm text-zinc-400">
+              <div className="bg-surface-light border border-surface-gray rounded-lg p-4">
+                <p className="text-sm text-text-light">
                   Ready to create your campaign and run AI research. Click "Create Campaign" to begin.
                 </p>
-                <div className="mt-4 space-y-2 text-sm text-zinc-500">
+                <div className="mt-4 space-y-2 text-sm text-text-muted">
                   <p>✓ Campaign will be created with your information</p>
                   {formData.industry && (
                     <>
@@ -244,7 +245,7 @@ export default function CampaignCreate() {
                   <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
                   <p className="text-sm text-blue-400">{researchStatus.message}</p>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">This may take 30-60 seconds...</p>
+                <p className="text-xs text-text-muted mt-2">This may take 30-60 seconds...</p>
               </div>
             )}
 
@@ -254,7 +255,7 @@ export default function CampaignCreate() {
                   <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
                   <p className="text-sm text-blue-400">{researchStatus.message}</p>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">This may take 30-60 seconds...</p>
+                <p className="text-xs text-text-muted mt-2">This may take 30-60 seconds...</p>
               </div>
             )}
 
@@ -273,7 +274,7 @@ export default function CampaignCreate() {
                   <p className="text-sm text-red-400">{researchStatus.message}</p>
                 </div>
                 {researchStatus.error && (
-                  <p className="text-xs text-red-300 mt-2">{researchStatus.error}</p>
+                  <p className="text-xs text-red-600 mt-2">{researchStatus.error}</p>
                 )}
               </div>
             )}
@@ -284,71 +285,71 @@ export default function CampaignCreate() {
         {step.key === 'basic' ? (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Campaign Name *</label>
+              <label className="block text-sm font-medium text-text-light mb-2">Campaign Name *</label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g., Q1 Construction Outreach"
-                className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-xl text-white placeholder-zinc-600 text-lg focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+                className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary placeholder-text-muted text-lg focus:border-accent-green focus:ring-1 focus:ring-accent-green"
                 autoFocus
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Industry *</label>
+              <label className="block text-sm font-medium text-text-light mb-2">Industry *</label>
               <input
                 type="text"
                 value={formData.industry}
                 onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
                 placeholder="e.g., Mining & Resources, Construction, Logistics"
-                className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-xl text-white placeholder-zinc-600 focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+                className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary placeholder-text-muted focus:border-accent-green focus:ring-1 focus:ring-accent-green"
               />
-              <p className="text-xs text-zinc-500 mt-1">Required for AI research</p>
+              <p className="text-xs text-text-muted mt-1">Required for AI research</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Geography</label>
+              <label className="block text-sm font-medium text-text-light mb-2">Geography</label>
               <input
                 type="text"
                 value={formData.geography}
                 onChange={(e) => setFormData({ ...formData, geography: e.target.value })}
                 placeholder="e.g., Australia, NSW, Victoria"
-                className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-xl text-white placeholder-zinc-600 focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+                className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary placeholder-text-muted focus:border-accent-green focus:ring-1 focus:ring-accent-green"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-400 mb-2">Service/Product Offering</label>
+              <label className="block text-sm font-medium text-text-light mb-2">Service/Product Offering</label>
               <input
                 type="text"
                 value={formData.service_offering}
                 onChange={(e) => setFormData({ ...formData, service_offering: e.target.value })}
                 placeholder="e.g., Freight services with Direct Line guarantee"
-                className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-xl text-white placeholder-zinc-600 focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+                className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary placeholder-text-muted focus:border-accent-green focus:ring-1 focus:ring-accent-green"
               />
             </div>
           </div>
         ) : step.key === 'research' ? (
           <div className="space-y-4">
-            <div className="bg-surface rounded-lg p-4 space-y-2">
+            <div className="bg-surface-light rounded-lg p-4 space-y-2 border border-surface-gray">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">Campaign Name</span>
-                <span className="text-sm text-white font-medium">{formData.name}</span>
+                <span className="text-sm text-text-light">Campaign Name</span>
+                <span className="text-sm text-primary font-medium">{formData.name}</span>
               </div>
               {formData.industry && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">Industry</span>
-                  <span className="text-sm text-white font-medium">{formData.industry}</span>
+                  <span className="text-sm text-text-light">Industry</span>
+                  <span className="text-sm text-primary font-medium">{formData.industry}</span>
                 </div>
               )}
               {formData.geography && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">Geography</span>
-                  <span className="text-sm text-white font-medium">{formData.geography}</span>
+                  <span className="text-sm text-text-light">Geography</span>
+                  <span className="text-sm text-primary font-medium">{formData.geography}</span>
                 </div>
               )}
               {formData.offer && formData.offer.trim() && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-zinc-400">Offer</span>
-                  <span className="text-sm text-white font-medium line-clamp-1">{formData.offer}</span>
+                  <span className="text-sm text-text-light">Offer</span>
+                  <span className="text-sm text-primary font-medium line-clamp-1">{formData.offer}</span>
                 </div>
               )}
             </div>
@@ -364,7 +365,7 @@ export default function CampaignCreate() {
               'Any additional context that might help generate better copy...'
             }
             rows={6}
-            className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-xl text-white placeholder-zinc-600 resize-none focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+            className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary placeholder-text-muted resize-none focus:border-accent-green focus:ring-1 focus:ring-accent-green"
             autoFocus
           />
         )}
@@ -374,7 +375,7 @@ export default function CampaignCreate() {
           <button
             onClick={handleBack}
             disabled={createMutation.isPending || researchStatus.stage !== 'idle'}
-            className="flex items-center gap-2 px-4 py-2 text-zinc-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 text-text-light hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -383,7 +384,7 @@ export default function CampaignCreate() {
           <button
             onClick={handleNext}
             disabled={!canProceed() || createMutation.isPending || researchStatus.stage !== 'idle'}
-            className="flex items-center gap-2 px-6 py-2.5 bg-accent-electric text-surface-dark font-medium rounded-xl hover:bg-accent-electric/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-2 px-6 py-2.5 bg-accent-green text-primary font-medium rounded-lg hover:bg-accent-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {createMutation.isPending || researchStatus.stage !== 'idle' ? (
               <>

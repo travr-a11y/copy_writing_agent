@@ -10,18 +10,18 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation()
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface-light">
       {/* Header */}
-      <header className="border-b border-surface-lighter bg-surface-dark/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-surface-gray bg-surface sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-electric to-accent-coral flex items-center justify-center transform group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transform group-hover:scale-105 transition-transform">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white font-display">CopyWrite</h1>
-                <p className="text-xs text-zinc-500">AU Email Drafting</p>
+                <h1 className="text-xl font-bold text-primary font-display">CopyWrite</h1>
+                <p className="text-xs text-text-light">AU Email Drafting</p>
               </div>
             </Link>
 
@@ -30,8 +30,8 @@ export default function Layout({ children }: LayoutProps) {
                 to="/"
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   location.pathname === '/'
-                    ? 'bg-surface-lighter text-white'
-                    : 'text-zinc-400 hover:text-white hover:bg-surface-light'
+                    ? 'bg-accent-green text-primary font-medium'
+                    : 'text-text-light hover:text-primary hover:bg-surface-gray/50'
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -40,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
 
               <Link
                 to="/campaigns/new"
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-electric text-surface-dark font-medium text-sm hover:bg-accent-electric/90 transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-green text-primary font-medium text-sm hover:bg-accent-green/90 transition-all"
               >
                 <Plus className="w-4 h-4" />
                 <span>New Campaign</span>
@@ -56,9 +56,9 @@ export default function Layout({ children }: LayoutProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-surface-lighter mt-auto">
+      <footer className="border-t border-surface-gray mt-auto bg-surface">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <p className="text-xs text-zinc-600 text-center">
+          <p className="text-xs text-text-light text-center">
             AU-centric email copy drafting system • Local MVP
           </p>
         </div>

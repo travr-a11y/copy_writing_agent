@@ -168,6 +168,7 @@ export interface Campaign {
   research_version?: number | null
   research_history?: ResearchHistoryEntry[]
   last_research_at?: string | null
+  docs_last_processed_at?: string | null
   research_skipped?: boolean
   // Timestamps
   created_at: string
@@ -197,10 +198,12 @@ export interface Document {
   filename: string
   file_path: string
   file_type: string
-  doc_type: 'voice' | 'voc' | 'campaign_context' | 'voc_research' | 'research_report' | null
+  doc_type: 'company_voice' | 'voice_of_customer' | 'call_transcript' | 'research' | 'campaign_context' | null
   channel: string | null
   industry: string | null
   role: string | null
+  source_type: 'internal' | 'market_feedback' | null
+  additional_context: string | null
   chunk_count: number
   processed: number
   created_at: string
@@ -227,6 +230,10 @@ export interface Variant {
   body: string
   thesis: string | null
   starred: boolean
+  archived?: boolean
+  archived_at?: string | null
+  archive_reason?: string | null
+  variables_used?: string | null
   word_count: number
   readability_grade: number
   qa_pass: boolean

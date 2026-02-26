@@ -2,39 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar */
+/* LIGHT THEME - Frank Advisory Minimalist Design */
+
+/* Custom scrollbar - Light theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1A1A1D;
+  background: #f9f9fb;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #d5d5dd;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #52525b;
+  background: #b0b0bf;
 }
 
-/* Selection color */
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Selection color - Yellow-green accent */
 ::selection {
-  background: rgba(0, 217, 255, 0.3);
+  background: rgba(136, 170, 0, 0.2);  /* #88aa00 with transparency */
 }
 
-/* Base styles */
+/* Base styles - Light background */
 body {
-  @apply bg-surface text-white antialiased;
+  @apply bg-surface text-text antialiased;
   font-family: 'Satoshi', 'Inter', system-ui, sans-serif;
 }
 
-/* Focus states */
+/* Focus states - Accent green */
 *:focus-visible {
-  @apply outline-none ring-2 ring-accent-electric ring-offset-2 ring-offset-surface;
+  @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-surface;
 }
 
 /* Smooth transitions */
@@ -42,12 +54,13 @@ body {
   @apply transition-colors duration-200;
 }
 
-/* Typography */
+/* Typography - Dark indigo headings */
 h1, h2, h3, h4 {
   font-family: 'Cabinet Grotesk', 'Satoshi', sans-serif;
+  @apply text-primary font-bold;
 }
 
-/* Loading shimmer */
+/* Loading shimmer - Light theme */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -60,10 +73,19 @@ h1, h2, h3, h4 {
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    #1A1A1D 25%,
-    #242428 50%,
-    #1A1A1D 75%
+    #f9f9fb 25%,
+    #ffffff 50%,
+    #f9f9fb 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+/* Chevron icon for Frank Advisory design */
+.chevron-icon {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #88aa00;
+  clip-path: polygon(40% 0%, 40% 20%, 20% 20%, 20% 40%, 0% 40%, 0% 60%, 20% 60%, 20% 80%, 40% 80%, 40% 100%, 60% 100%, 60% 80%, 80% 80%, 80% 60%, 100% 60%, 100% 40%, 80% 40%, 80% 20%, 60% 20%, 60% 0%);
 }

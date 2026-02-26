@@ -10,6 +10,7 @@ from app.models.campaign import Campaign
 from app.models.document import Document
 from app.services.vectorstore import query_similar
 from app.services.caching import get_cached, set_cached, invalidate
+from app.utils.llm import extract_json_from_llm_response
 
 settings = get_settings()
 
@@ -123,12 +124,12 @@ async def analyze_gaps(campaign: Campaign, db: Session, force_refresh: bool = Fa
         documents_summary=documents_summary
     )
     
-    # Call Claude Opus for analytics
+    # Call Claude for analytics (using configurable model for cost optimization)
     client = Anthropic(api_key=settings.anthropic_api_key)
-    
+
     try:
         response = client.messages.create(
-            model=settings.claude_opus_model,
+            model=settings.claude_gap_analysis_model,  # Switched from Opus to Sonnet by default (3x cost reduction)
             max_tokens=2000,
             messages=[
                 {
@@ -139,15 +140,10 @@ async def analyze_gaps(campaign: Campaign, db: Session, force_refresh: bool = Fa
         )
         
         response_text = response.content[0].text.strip()
-        
-        # Parse JSON from response
+
+        # Parse JSON from response using utility function
         try:
-            if "```" in response_text:
-                json_start = response_text.find("{")
-                json_end = response_text.rfind("}") + 1
-                response_text = response_text[json_start:json_end]
-            
-            result = json.loads(response_text)
+            result = extract_json_from_llm_response(response_text)
             
             # Validate and set defaults
             if "coverage_score" not in result:

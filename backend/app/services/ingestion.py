@@ -132,10 +132,10 @@ async def process_document(document: Document, db: Session) -> int:
     chunk_texts = []
     metadatas = []
     
-    for chunk_text, chunk_index in chunks:
+    for text_content, chunk_index in chunks:
         chunk_id = str(uuid.uuid4())
         chunk_ids.append(chunk_id)
-        chunk_texts.append(chunk_text)
+        chunk_texts.append(text_content)
         metadatas.append({
             "document_id": document.id,
             "campaign_id": document.campaign_id,

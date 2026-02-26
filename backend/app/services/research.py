@@ -155,7 +155,7 @@ async def research_pain_points(
         filename=filename,
         file_path=file_path,
         file_type="txt",
-        doc_type="voc",  # Research reports are VOC-related
+        doc_type="voice_of_customer",  # Research reports are VOC-related
         channel=None,
         industry=None,
         role=None,
@@ -302,6 +302,17 @@ Respond with ONLY a valid JSON object matching the schema above. Do not include 
     campaign.icp_buying_journey = icp_data.get("buying_journey", {})
     campaign.icp_messaging_angles = icp_data.get("messaging_angles", {})
     campaign.icp_channels = icp_data.get("channels", {})
+    
+    # Flag all ICP JSON fields as modified for SQLAlchemy
+    flag_modified(campaign, "icp_firmographics")
+    flag_modified(campaign, "icp_technographics")
+    flag_modified(campaign, "icp_buyer_personas")
+    flag_modified(campaign, "icp_psychographics")
+    flag_modified(campaign, "icp_triggers")
+    flag_modified(campaign, "icp_qualification")
+    flag_modified(campaign, "icp_buying_journey")
+    flag_modified(campaign, "icp_messaging_angles")
+    flag_modified(campaign, "icp_channels")
     
     # Update research version and history
     if campaign.research_version is None:
@@ -453,6 +464,12 @@ Respond with ONLY a valid JSON object matching the schema above. Do not include 
     campaign.voc_objections = voc_data.get("objections", [])
     campaign.voc_implications = voc_data.get("implications", {})
     
+    # Flag all VOC JSON fields as modified for SQLAlchemy
+    flag_modified(campaign, "voc_pain_themes")
+    flag_modified(campaign, "voc_language_bank")
+    flag_modified(campaign, "voc_objections")
+    flag_modified(campaign, "voc_implications")
+    
     # Merge pain themes into pain_points field
     pain_theme_texts = []
     for theme in voc_data.get("pain_themes", []):
@@ -540,7 +557,7 @@ SOURCES LIMITED:
         filename=filename,
         file_path=file_path,
         file_type="txt",
-        doc_type="voc_research",
+        doc_type="voice_of_customer",
         processed=0,
         chunk_count=0,
     )

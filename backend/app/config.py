@@ -28,7 +28,8 @@ class Settings(BaseSettings):
     
     # LLM Settings
     claude_model: str = "claude-sonnet-4-20250514"  # Writing
-    claude_opus_model: str = "claude-opus-4-20250514"  # Analytics
+    claude_opus_model: str = "claude-opus-4-20250514"  # Analytics (expensive)
+    claude_gap_analysis_model: str = "claude-sonnet-4-20250514"  # Gap analysis (switchable for cost optimization)
     gemini_model: str = "gemini-2.0-flash"  # Research
     perplexity_model: str = "sonar-pro"  # Research
     max_tokens: int = 4096
@@ -41,6 +42,7 @@ class Settings(BaseSettings):
     target_readability_grade: float = 6.0
     max_commas_per_sentence: int = 1
     max_qa_retries: int = 3
+    qa_fail_fast: bool = True  # If True, continue generating even if QA fails (don't block batch)
     
     # Generation Settings
     default_num_variants: int = 8
@@ -64,12 +66,23 @@ def get_settings() -> Settings:
 # Banned phrases for QA
 BANNED_PHRASES = [
     "just following up",
+    "checking in",
+    "in case you got busy",
+    "this might have got lost",
+    "wanted to follow up",
+    "bumping this",
+    "moving this to the top",
+    "quick follow up",
+    "just a quick note",
+    "just wanted to",
     "circling back",
     "touching base",
     "wanted to reach out",
     "hope this email finds you well",
     "per my last email",
     "as per our conversation",
+    "following up on",
+    "as I mentioned",
     "don't miss out",
     "act now",
     "limited time",
@@ -103,12 +116,12 @@ AMERICANISM_PATTERNS = [
 
 # Valid angles for variant generation
 VARIANT_ANGLES = [
-    "curiosity",
-    "pain",
-    "outcome",
-    "proof",
-    "authority",
-    "empathy",
-    "challenge",
-    "insight",
+    "Curiosity",
+    "Pain",
+    "Value",
+    "Authority",
+    "Scarcity",
+    "Social Proof",
+    "Contrast",
+    "Direct",
 ]

@@ -67,12 +67,12 @@ export const campaignApi = {
     platformsPriority: string = '',
     additionalContext: string = ''
   ): Promise<VOCResearchResponse> => {
-    const params = new URLSearchParams()
-    params.append('icp_summary', icpSummary)
-    if (competitors) params.append('competitors', competitors)
-    if (platformsPriority) params.append('platforms_priority', platformsPriority)
-    if (additionalContext) params.append('additional_context', additionalContext)
-    const { data } = await api.post(`/campaigns/${campaignId}/research/voice?${params}`)
+    const { data } = await api.post(`/campaigns/${campaignId}/research/voice`, {
+      icp_summary: icpSummary,
+      competitors,
+      platforms_priority: platformsPriority,
+      additional_context: additionalContext
+    })
     return data
   },
 
@@ -103,6 +103,26 @@ export const campaignApi = {
     const { data } = await api.get(`/campaigns/${campaignId}/research/diff?v1=${v1}&v2=${v2}`)
     return data
   },
+
+  researchFull: async (
+    campaignId: string,
+    industry: string,
+    geography: string = 'Australia',
+    serviceOffering: string = '',
+    additionalContext: string = '',
+    competitors: string = '',
+    platformsPriority: string = ''
+  ): Promise<{ icp: ICPResearchResponse; voc: VOCResearchResponse }> => {
+    const params = new URLSearchParams()
+    params.append('industry', industry)
+    params.append('geography', geography)
+    if (serviceOffering) params.append('service_offering', serviceOffering)
+    if (additionalContext) params.append('additional_context', additionalContext)
+    if (competitors) params.append('competitors', competitors)
+    if (platformsPriority) params.append('platforms_priority', platformsPriority)
+    const { data } = await api.post(`/campaigns/${campaignId}/research/full?${params}`)
+    return data
+  },
 }
 
 // Document endpoints
@@ -114,6 +134,8 @@ export const documentApi = {
     if (metadata?.channel) formData.append('channel', metadata.channel)
     if (metadata?.industry) formData.append('industry', metadata.industry)
     if (metadata?.role) formData.append('role', metadata.role)
+    if (metadata?.source_type) formData.append('source_type', metadata.source_type)
+    if (metadata?.additional_context) formData.append('additional_context', metadata.additional_context)
 
     const { data } = await api.post(`/documents/campaigns/${campaignId}/upload`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -139,14 +161,31 @@ export const documentApi = {
   delete: async (documentId: string): Promise<void> => {
     await api.delete(`/documents/${documentId}`)
   },
+
+  getContent: async (documentId: string): Promise<{ content: string; filename: string; file_type: string }> => {
+    const { data } = await api.get(`/documents/${documentId}/content`)
+    return data
+  },
+
+  downloadUrl: (documentId: string): string => {
+    return `/api/documents/${documentId}/download`
+  },
 }
 
 // Generate endpoints
 export const generateApi = {
-  variants: async (campaignId: string, numVariants?: number, angles?: string[]): Promise<GenerateResponse> => {
+  variants: async (
+    campaignId: string,
+    numVariants?: number,
+    angles?: string[],
+    chunkPreference?: string,
+    customInstructions?: string
+  ): Promise<GenerateResponse> => {
     const { data } = await api.post(`/campaigns/${campaignId}/generate`, {
       num_variants: numVariants,
       angles,
+      chunk_preference: chunkPreference,
+      custom_instructions: customInstructions,
     })
     return data
   },
@@ -169,11 +208,15 @@ export const generateApi = {
 
 // Variant endpoints
 export const variantApi = {
-  list: async (campaignId: string, filters?: { touch?: string; chunk?: string; qa_pass?: boolean }): Promise<Variant[]> => {
+  list: async (
+    campaignId: string,
+    filters?: { touch?: string; chunk?: string; qa_pass?: boolean; include_archived?: boolean }
+  ): Promise<Variant[]> => {
     const params = new URLSearchParams()
     if (filters?.touch) params.append('touch', filters.touch)
     if (filters?.chunk) params.append('chunk', filters.chunk)
     if (filters?.qa_pass !== undefined) params.append('qa_pass', String(filters.qa_pass))
+    if (filters?.include_archived !== undefined) params.append('include_archived', String(filters.include_archived))
     
     const { data } = await api.get(`/campaigns/${campaignId}/variants?${params}`)
     return data
@@ -186,6 +229,21 @@ export const variantApi = {
 
   update: async (variantId: string, body: string): Promise<Variant> => {
     const { data } = await api.put(`/variants/${variantId}`, { body })
+    return data
+  },
+
+  archive: async (variantId: string, reason?: string): Promise<Variant> => {
+    const { data } = await api.put(`/variants/${variantId}/archive`, { reason })
+    return data
+  },
+
+  restore: async (variantId: string): Promise<Variant> => {
+    const { data } = await api.put(`/variants/${variantId}/restore`)
+    return data
+  },
+
+  updateThesis: async (variantId: string, thesis: string): Promise<Variant> => {
+    const { data } = await api.put(`/variants/${variantId}/thesis?thesis=${encodeURIComponent(thesis)}`)
     return data
   },
 

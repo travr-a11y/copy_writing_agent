@@ -18,38 +18,37 @@ export default function CampaignCard({ campaign }: CampaignCardProps) {
   return (
     <Link
       to={`/campaigns/${campaign.id}`}
-      className="group block bg-surface-light rounded-2xl border border-surface-lighter hover:border-accent-electric/50 transition-all duration-300 overflow-hidden"
+      className="group block bg-surface rounded-xl border border-surface-gray hover:border-accent-green shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
     >
-      {/* Top accent bar */}
-      <div className="h-1 bg-gradient-to-r from-accent-electric via-accent-coral to-accent-lime opacity-60 group-hover:opacity-100 transition-opacity" />
-
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-bold text-white group-hover:text-accent-electric transition-colors">
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-primary group-hover:text-accent-green transition-colors">
               {campaign.name}
             </h3>
-            <div className="flex items-center gap-2 mt-1 text-zinc-500 text-xs">
+            <div className="flex items-center gap-2 mt-1 text-text-light text-xs">
               <Clock className="w-3 h-3" />
               <span>{createdDate}</span>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-zinc-600 group-hover:text-accent-electric group-hover:translate-x-1 transition-all" />
+          <ChevronRight className="w-5 h-5 text-text-light group-hover:text-accent-green group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
         </div>
 
         {/* ICP Preview */}
-        <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
-          {campaign.icp}
-        </p>
+        {campaign.icp && (
+          <p className="text-sm text-text-light line-clamp-2 mb-4">
+            {campaign.icp}
+          </p>
+        )}
 
         {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 border-t border-surface-lighter">
-          <div className="flex items-center gap-2 text-zinc-500">
+        <div className="flex items-center gap-4 pt-4 border-t border-surface-gray">
+          <div className="flex items-center gap-2 text-text-light">
             <FileText className="w-4 h-4" />
             <span className="text-sm">{docCount} docs</span>
           </div>
-          <div className="flex items-center gap-2 text-zinc-500">
+          <div className="flex items-center gap-2 text-text-light">
             <MessageSquare className="w-4 h-4" />
             <span className="text-sm">{variantCount} variants</span>
           </div>

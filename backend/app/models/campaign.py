@@ -51,6 +51,7 @@ class Campaign(Base):
     research_version = Column(Integer, nullable=True, default=None)  # Current research version
     research_history = Column(JSON, nullable=True, default=list)  # List of {version, timestamp, summary}
     last_research_at = Column(DateTime, nullable=True)  # When agents last ran
+    docs_last_processed_at = Column(DateTime, nullable=True)  # When documents were last processed
     research_skipped = Column(String(10), nullable=True, default="false")  # "true" if user skipped research
     
     # Timestamps
@@ -95,6 +96,7 @@ class Campaign(Base):
             "research_version": self.research_version,
             "research_history": self.research_history or [],
             "last_research_at": self.last_research_at.isoformat() if self.last_research_at else None,
+            "docs_last_processed_at": self.docs_last_processed_at.isoformat() if self.docs_last_processed_at else None,
             "research_skipped": self.research_skipped == "true",
             # Timestamps
             "created_at": self.created_at.isoformat() if self.created_at else None,

@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import campaigns, documents, generate, export, offers, icps
+from app.routers import campaigns, documents, generate, generate_stream, export, offers, icps
 
 
 settings = get_settings()
@@ -33,7 +33,7 @@ app = FastAPI(
 # CORS middleware for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,6 +43,7 @@ app.add_middleware(
 app.include_router(campaigns.router, prefix="/api/campaigns", tags=["Campaigns"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(generate.router, prefix="/api", tags=["Generate"])
+app.include_router(generate_stream.router, prefix="/api", tags=["Generate"])
 app.include_router(export.router, prefix="/api", tags=["Export"])
 app.include_router(offers.router, prefix="/api/offers", tags=["Offers"])
 app.include_router(icps.router, prefix="/api/icps", tags=["ICPs"])

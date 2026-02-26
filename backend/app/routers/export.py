@@ -12,19 +12,20 @@ from app.models.variant import Variant
 
 router = APIRouter()
 
-# Stable CSV column order - DO NOT CHANGE ORDER
+# CSV column order - Lead and follow-up on same row
 CSV_COLUMNS = [
     "campaign_id",
     "campaign_name",
     "variant_id",
     "lead_variant_id",
     "touch",
+    "starred",
     "chunk",
     "angle",
+    "thesis",
     "subject",
     "body",
-    "thesis",
-    "starred",
+    "touch 2",
     "word_count",
     "readability_grade",
     "qa_pass",
@@ -35,14 +36,19 @@ CSV_COLUMNS = [
 
 
 def generate_csv(variants: List[Variant], campaign_names: dict) -> str:
-    """Generate CSV content from variants."""
+    """Generate CSV content from variants. Lead + follow-up on same row."""
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=CSV_COLUMNS)
     writer.writeheader()
     
-    for variant in variants:
-        campaign_name = campaign_names.get(variant.campaign_id, "Unknown")
-        row = variant.to_csv_row(campaign_name)
+    # Group variants: leads with their follow-ups
+    leads = [v for v in variants if v.touch == 'lead' and v.chunk == 'base']
+    followups_by_lead = {v.lead_variant_id: v for v in variants if v.touch == 'followup' and v.chunk == 'base'}
+    
+    for lead in leads:
+        campaign_name = campaign_names.get(lead.campaign_id, "Unknown")
+        followup = followups_by_lead.get(lead.id)
+        row = lead.to_csv_row(campaign_name, followup)
         writer.writerow(row)
     
     return output.getvalue()
@@ -64,16 +70,20 @@ async def export_campaign_csv(
     
     query = db.query(Variant).filter(Variant.campaign_id == campaign_id)
     
-    if touch:
-        query = query.filter(Variant.touch == touch)
-    if chunk:
-        query = query.filter(Variant.chunk == chunk)
+    # Always include both leads and follow-ups for pairing
+    # Filtering by touch/chunk will be handled in generate_csv
     if qa_pass is not None:
         query = query.filter(Variant.qa_pass == qa_pass)
     if starred is not None:
         query = query.filter(Variant.starred == starred)
     
     variants = query.order_by(Variant.created_at).all()
+    
+    # Apply touch/chunk filters after fetching (needed for pairing)
+    if touch:
+        variants = [v for v in variants if v.touch == touch]
+    if chunk:
+        variants = [v for v in variants if v.chunk == chunk]
     
     if not variants:
         raise HTTPException(status_code=404, detail="No variants found")
@@ -116,16 +126,19 @@ async def export_bulk_csv(
     # Get variants
     query = db.query(Variant).filter(Variant.campaign_id.in_(ids))
     
-    if touch:
-        query = query.filter(Variant.touch == touch)
-    if chunk:
-        query = query.filter(Variant.chunk == chunk)
+    # Always include both leads and follow-ups for pairing
     if qa_pass is not None:
         query = query.filter(Variant.qa_pass == qa_pass)
     if starred is not None:
         query = query.filter(Variant.starred == starred)
     
     variants = query.order_by(Variant.campaign_id, Variant.created_at).all()
+    
+    # Apply touch/chunk filters after fetching (needed for pairing)
+    if touch:
+        variants = [v for v in variants if v.touch == touch]
+    if chunk:
+        variants = [v for v in variants if v.chunk == chunk]
     
     if not variants:
         raise HTTPException(status_code=404, detail="No variants found")

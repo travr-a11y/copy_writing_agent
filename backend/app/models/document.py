@@ -24,10 +24,12 @@ class Document(Base):
     file_type = Column(String(50), nullable=False)  # csv, docx, txt, md
     
     # AI-suggested metadata
-    doc_type = Column(String(50), nullable=True)  # voice, voc, campaign_context
+    doc_type = Column(String(50), nullable=True)  # company_voice, voice_of_customer, call_transcript, research, campaign_context
     channel = Column(String(50), nullable=True)  # email, linkedin, call
     industry = Column(String(100), nullable=True)
     role = Column(String(100), nullable=True)  # owner, director, head_of
+    source_type = Column(String(50), nullable=True)  # internal, market_feedback
+    additional_context = Column(Text, nullable=True)  # User-provided context for LLM
     
     # Processing status
     chunk_count = Column(Integer, default=0)
@@ -51,6 +53,8 @@ class Document(Base):
             "channel": self.channel,
             "industry": self.industry,
             "role": self.role,
+            "source_type": self.source_type,
+            "additional_context": self.additional_context,
             "chunk_count": self.chunk_count,
             "processed": self.processed,
             "created_at": self.created_at.isoformat() if self.created_at else None,

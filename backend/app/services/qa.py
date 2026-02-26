@@ -64,6 +64,40 @@ def check_americanisms(text: str) -> List[str]:
     return found
 
 
+def check_greeting_format(text: str) -> List[str]:
+    """Check that email starts with {first_name} only, no greeting words."""
+    issues = []
+    
+    # Greeting patterns that should NOT appear at the start
+    greeting_patterns = [
+        (r"^Hey\s+", "Hey"),
+        (r"^Hi\s+", "Hi"),
+        (r"^G'day\s+", "G'day"),
+        (r"^Morning\s+", "Morning"),
+        (r"^Good morning\s+", "Good morning"),
+        (r"^Good afternoon\s+", "Good afternoon"),
+        (r"^Hello\s+", "Hello"),
+        (r"^Hiya\s+", "Hiya"),
+        (r"^Gday\s+", "Gday"),
+    ]
+    
+    text_stripped = text.strip()
+    
+    for pattern, greeting in greeting_patterns:
+        if re.match(pattern, text_stripped, re.IGNORECASE):
+            issues.append(f"Starts with '{greeting}' - should start with {{first_name}} only")
+    
+    # Check if it starts with {first_name} (with or without comma)
+    if not re.match(r"^\{\{first_name\}\}", text_stripped):
+        # If no greeting word found but also doesn't start with {first_name}, that's also an issue
+        # But only flag if we found a greeting word (already handled above)
+        # or if it doesn't start with any variable at all
+        if not re.match(r"^\{\{", text_stripped):
+            issues.append("Should start with {{first_name}}")
+    
+    return issues
+
+
 def has_open_question(text: str) -> bool:
     """Check if text contains an open-ended question."""
     # Look for question marks
@@ -129,6 +163,11 @@ def check_variant_qa(variant: Variant) -> Dict[str, Any]:
     if not has_open_question(variant.body):
         issues.append("Missing open-ended question")
     
+    # Greeting format check
+    greeting_issues = check_greeting_format(variant.body)
+    if greeting_issues:
+        issues.extend(greeting_issues)
+    
     return {
         "pass": len(issues) == 0,
         "notes": "; ".join(issues) if issues else None,
@@ -139,7 +178,8 @@ def check_variant_qa(variant: Variant) -> Dict[str, Any]:
             "comma_violations": len(comma_violations),
             "banned_count": len(banned),
             "americanism_count": len(americanisms),
-            "has_question": has_open_question(variant.body)
+            "has_question": has_open_question(variant.body),
+            "greeting_issues": len(greeting_issues)
         }
     }
 
@@ -160,6 +200,7 @@ AU Writing Rules:
 - No hype, urgency, or Americanisms
 - One open-ended question required
 - Word count: {min_words}-{max_words} words
+- Start with {{first_name}} only - NO greeting words (Hey, Hi, G'day, etc.)
 
 Rewrite the email to fix ALL issues while keeping the same angle and message.
 Return ONLY the rewritten email text, nothing else."""

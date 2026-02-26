@@ -17,27 +17,29 @@ Document content (first 2000 chars):
 Based on the content, suggest the following tags:
 
 1. doc_type: What type of document is this?
-   - "voice" = Author's own writing (emails, proposals, notes showing their personal style)
-   - "voc" = Voice of customer (reviews, testimonials, customer feedback, complaints)
-   - "campaign_context" = Campaign materials (offer descriptions, ICP definitions, pain points)
+   - "company_voice" = Writing tone/style of the company sending emails (emails, proposals, notes showing company's personal style)
+   - "voice_of_customer" = Industry language and tone/wording the customer uses (reviews, testimonials, customer feedback, complaints, social media posts)
+   - "call_transcript" = Call transcripts used to refine messaging, ICP, and offer once market feedback is returned
+   - "research" = Additional research done about the market or target market (market reports, industry analysis, competitor intel)
+   - "campaign_context" = Campaign materials (offer descriptions, ICP definitions, pain points, campaign goals)
 
 2. channel: What communication channel does this relate to?
    - "email" = Email communication
-   - "linkedin" = LinkedIn messages
+   - "linkedin" = LinkedIn messages or posts
    - "call" = Phone/video call transcripts
    - null if not applicable
 
 3. industry: What industry does this relate to?
-   - Examples: "construction", "logistics", "manufacturing", "professional_services", "civil"
+   - Examples: "construction", "logistics", "manufacturing", "professional_services", "civil", "mining", "telecommunications"
    - null if not clear
 
 4. role: What role/persona does this relate to?
-   - Examples: "owner", "founder", "director", "head_of", "gm"
+   - Examples: "owner", "founder", "director", "head_of", "gm", "manager"
    - null if not clear
 
 Respond with ONLY a JSON object:
 {{
-    "doc_type": "voice|voc|campaign_context",
+    "doc_type": "company_voice|voice_of_customer|call_transcript|research|campaign_context",
     "channel": "email|linkedin|call|null",
     "industry": "string or null",
     "role": "string or null",

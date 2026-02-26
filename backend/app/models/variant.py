@@ -48,6 +48,14 @@ class Variant(Base):
     # User preferences
     starred = Column(Boolean, nullable=False, default=False)
     
+    # Archive functionality
+    archived = Column(Boolean, nullable=False, default=False)
+    archived_at = Column(DateTime, nullable=True)
+    archive_reason = Column(Text, nullable=True)
+    
+    # Template variables tracking
+    variables_used = Column(Text, nullable=True)  # JSON string of variables found in body
+    
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -74,6 +82,10 @@ class Variant(Base):
             "body": self.body,
             "thesis": self.thesis,
             "starred": self.starred,
+            "archived": self.archived,
+            "archived_at": self.archived_at.isoformat() if self.archived_at else None,
+            "archive_reason": self.archive_reason,
+            "variables_used": self.variables_used,
             "word_count": self.word_count,
             "readability_grade": self.readability_grade,
             "qa_pass": self.qa_pass,
@@ -82,20 +94,21 @@ class Variant(Base):
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
     
-    def to_csv_row(self, campaign_name: str) -> dict:
-        """Convert to CSV export row with stable column names."""
+    def to_csv_row(self, campaign_name: str, followup: "Variant" = None) -> dict:
+        """Convert to CSV export row. Lead + follow-up on same row."""
         return {
             "campaign_id": self.campaign_id,
             "campaign_name": campaign_name,
             "variant_id": self.id,
             "lead_variant_id": self.lead_variant_id or "",
             "touch": self.touch,
+            "starred": self.starred,
             "chunk": self.chunk,
             "angle": self.angle,
-            "subject": self.subject or "",
-            "body": self.body,
             "thesis": self.thesis or "",
-            "starred": self.starred,
+            "subject": self.subject or "",
+            "body": self.body,  # Lead body
+            "touch 2": followup.body if followup else "",  # Follow-up body
             "word_count": self.word_count,
             "readability_grade": round(self.readability_grade, 1),
             "qa_pass": self.qa_pass,

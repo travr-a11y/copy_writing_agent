@@ -10,8 +10,16 @@ interface VariantEditorProps {
   onClose: () => void
 }
 
+const AVAILABLE_VARIABLES = [
+  { name: 'company_name', label: 'Company Name', example: '{{company_name}}' },
+  { name: 'industry', label: 'Industry', example: '{{industry}}' },
+  { name: 'location', label: 'Location', example: '{{location}}' },
+  { name: 'first_name', label: 'First Name', example: '{{first_name}}' },
+]
+
 export default function VariantEditor({ variant, campaignId, onClose }: VariantEditorProps) {
   const [body, setBody] = useState(variant.body)
+  const [cursorPosition, setCursorPosition] = useState(0)
   const queryClient = useQueryClient()
 
   const updateMutation = useMutation({
@@ -22,6 +30,21 @@ export default function VariantEditor({ variant, campaignId, onClose }: VariantE
     },
   })
 
+  const insertVariable = (variable: string) => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement
+    if (textarea) {
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
+      const newBody = body.substring(0, start) + variable + body.substring(end)
+      setBody(newBody)
+      // Set cursor position after inserted variable
+      setTimeout(() => {
+        textarea.focus()
+        textarea.setSelectionRange(start + variable.length, start + variable.length)
+      }, 0)
+    }
+  }
+
   const wordCount = body.split(/\s+/).filter(Boolean).length
   const isChanged = body !== variant.body
 
@@ -29,17 +52,38 @@ export default function VariantEditor({ variant, campaignId, onClose }: VariantE
     <div className="space-y-3">
       <textarea
         value={body}
-        onChange={(e) => setBody(e.target.value)}
+        onChange={(e) => {
+          setBody(e.target.value)
+          setCursorPosition(e.target.selectionStart)
+        }}
+        onSelect={(e) => {
+          const target = e.target as HTMLTextAreaElement
+          setCursorPosition(target.selectionStart)
+        }}
         rows={6}
-        className="w-full px-4 py-3 bg-surface border border-surface-lighter rounded-lg text-white text-sm resize-none focus:border-accent-electric focus:ring-1 focus:ring-accent-electric"
+        className="w-full px-4 py-3 bg-surface border border-surface-gray rounded-lg text-primary text-sm resize-none focus:border-accent-green focus:ring-1 focus:ring-accent-green"
         placeholder="Email body..."
       />
+
+      <div className="flex flex-wrap gap-2">
+        <span className="text-xs text-text-muted self-center">Insert variables:</span>
+        {AVAILABLE_VARIABLES.map((variable) => (
+          <button
+            key={variable.name}
+            onClick={() => insertVariable(variable.example)}
+            className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded border border-blue-500/30 hover:bg-blue-500/30 transition-colors font-mono"
+            title={variable.label}
+          >
+            {variable.example}
+          </button>
+        ))}
+      </div>
 
       <div className="flex items-center justify-between">
         <span className={`text-xs ${
           variant.touch === 'lead'
-            ? wordCount >= 30 && wordCount <= 100 ? 'text-green-400' : 'text-amber-400'
-            : wordCount >= 30 && wordCount <= 80 ? 'text-green-400' : 'text-amber-400'
+            ? wordCount >= 30 && wordCount <= 100 ? 'text-green-600' : 'text-amber-600'
+            : wordCount >= 30 && wordCount <= 80 ? 'text-green-600' : 'text-amber-600'
         }`}>
           {wordCount} words
           {variant.touch === 'lead' ? ' (target: 30-100)' : ' (target: 30-80)'}
@@ -48,7 +92,7 @@ export default function VariantEditor({ variant, campaignId, onClose }: VariantE
         <div className="flex items-center gap-2">
           <button
             onClick={onClose}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 text-sm text-text-light hover:text-primary transition-colors"
           >
             <X className="w-4 h-4" />
             Cancel
@@ -56,7 +100,7 @@ export default function VariantEditor({ variant, campaignId, onClose }: VariantE
           <button
             onClick={() => updateMutation.mutate()}
             disabled={!isChanged || updateMutation.isPending}
-            className="flex items-center gap-1 px-3 py-1.5 bg-accent-electric text-surface-dark text-sm font-medium rounded-lg hover:bg-accent-electric/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-1 px-3 py-1.5 bg-accent-green text-primary text-sm font-medium rounded-lg hover:bg-accent-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {updateMutation.isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

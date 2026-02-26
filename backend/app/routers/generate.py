@@ -1,6 +1,6 @@
 """Variant generation endpoints."""
 from typing import Optional, List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
@@ -18,6 +18,8 @@ class GenerateRequest(BaseModel):
     """Request body for generating variants."""
     num_variants: Optional[int] = None
     angles: Optional[List[str]] = None
+    chunk_preference: Optional[str] = None  # "base" | "up" | "down"
+    custom_instructions: Optional[str] = None
 
 
 class ChunkRequest(BaseModel):
@@ -28,6 +30,11 @@ class ChunkRequest(BaseModel):
 class VariantUpdate(BaseModel):
     """Request body for updating variant body (inline edit)."""
     body: str
+
+
+class ArchiveRequest(BaseModel):
+    """Request body for archiving a variant."""
+    reason: Optional[str] = None
 
 
 @router.post("/campaigns/{campaign_id}/generate")
@@ -41,6 +48,26 @@ async def generate_variants(
     if not campaign:
         raise HTTPException(status_code=404, detail="Campaign not found")
     
+    # Validate research is complete
+    if not campaign.research_version:
+        raise HTTPException(
+            status_code=400, 
+            detail="ICP research required. Run research first."
+        )
+    if not campaign.voc_pain_themes or len(campaign.voc_pain_themes) == 0:
+        raise HTTPException(
+            status_code=400, 
+            detail="Pain Points research required. Run research first."
+        )
+    
+    # Validate research is current (not stale)
+    if (campaign.docs_last_processed_at and campaign.last_research_at and 
+        campaign.docs_last_processed_at > campaign.last_research_at):
+        raise HTTPException(
+            status_code=400, 
+            detail="New documents processed since last research. Refresh research first."
+        )
+    
     num_variants = request.num_variants or settings.default_num_variants
     angles = request.angles or VARIANT_ANGLES[:num_variants]
     
@@ -52,7 +79,13 @@ async def generate_variants(
         angles = angles[:num_variants]
     
     try:
-        variant_pairs = await generate_variant_pairs(campaign, angles, db)
+        variant_pairs = await generate_variant_pairs(
+            campaign, 
+            angles, 
+            db,
+            custom_instructions=request.custom_instructions,
+            chunk_preference=request.chunk_preference
+        )
         return {
             "status": "success",
             "count": len(variant_pairs),
@@ -134,6 +167,7 @@ async def list_variants(
     chunk: Optional[str] = None,
     qa_pass: Optional[bool] = None,
     starred: Optional[bool] = None,
+    include_archived: bool = False,
     db: Session = Depends(get_db)
 ):
     """List variants for a campaign with optional filters."""
@@ -142,6 +176,9 @@ async def list_variants(
         raise HTTPException(status_code=404, detail="Campaign not found")
     
     query = db.query(Variant).filter(Variant.campaign_id == campaign_id)
+    
+    if not include_archived:
+        query = query.filter(Variant.archived == False)
     
     if touch:
         query = query.filter(Variant.touch == touch)
@@ -204,12 +241,79 @@ async def toggle_star_variant(variant_id: str, db: Session = Depends(get_db)):
     return variant.to_dict()
 
 
-@router.delete("/variants/{variant_id}")
-async def delete_variant(variant_id: str, db: Session = Depends(get_db)):
-    """Delete a variant."""
+@router.put("/variants/{variant_id}/archive")
+async def archive_variant(
+    variant_id: str,
+    request: ArchiveRequest = ArchiveRequest(),
+    db: Session = Depends(get_db)
+):
+    """Archive a variant (soft delete)."""
+    from datetime import datetime
+    
     variant = db.query(Variant).filter(Variant.id == variant_id).first()
     if not variant:
         raise HTTPException(status_code=404, detail="Variant not found")
+    
+    if variant.archived:
+        raise HTTPException(status_code=400, detail="Variant is already archived")
+    
+    variant.archived = True
+    variant.archived_at = datetime.utcnow()
+    variant.archive_reason = request.reason
+    
+    db.commit()
+    db.refresh(variant)
+    return variant.to_dict()
+
+
+@router.put("/variants/{variant_id}/restore")
+async def restore_variant(variant_id: str, db: Session = Depends(get_db)):
+    """Restore an archived variant."""
+    variant = db.query(Variant).filter(Variant.id == variant_id).first()
+    if not variant:
+        raise HTTPException(status_code=404, detail="Variant not found")
+    
+    if not variant.archived:
+        raise HTTPException(status_code=400, detail="Variant is not archived")
+    
+    variant.archived = False
+    variant.archived_at = None
+    variant.archive_reason = None
+    
+    db.commit()
+    db.refresh(variant)
+    return variant.to_dict()
+
+
+@router.put("/variants/{variant_id}/thesis")
+async def update_thesis(
+    variant_id: str,
+    thesis: str = Query(..., description="The thesis statement"),
+    db: Session = Depends(get_db)
+):
+    """Update the thesis/testing assumption for a variant."""
+    variant = db.query(Variant).filter(Variant.id == variant_id).first()
+    if not variant:
+        raise HTTPException(status_code=404, detail="Variant not found")
+    
+    variant.thesis = thesis
+    db.commit()
+    db.refresh(variant)
+    return variant.to_dict()
+
+
+@router.delete("/variants/{variant_id}")
+async def delete_variant(variant_id: str, db: Session = Depends(get_db)):
+    """Delete a variant. Only works on archived variants."""
+    variant = db.query(Variant).filter(Variant.id == variant_id).first()
+    if not variant:
+        raise HTTPException(status_code=404, detail="Variant not found")
+    
+    if not variant.archived:
+        raise HTTPException(
+            status_code=400,
+            detail="Variant must be archived before deletion. Use archive endpoint first."
+        )
     
     db.delete(variant)
     db.commit()
