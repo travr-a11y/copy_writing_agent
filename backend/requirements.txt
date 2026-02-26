@@ -8,7 +8,7 @@ python-dotenv==1.0.0
 
 # AI/ML
 anthropic==0.43.0
-chromadb==0.4.22
+chromadb==0.5.23
 sentence-transformers==2.3.1
 google-generativeai==0.3.2
 httpx==0.26.0
@@ -26,3 +26,4 @@ pydantic==2.5.3
 pydantic-settings==2.1.0
 uuid7==0.1.0
 aiofiles==23.2.1
+setuptools>=70.0.0,<71.0.0
