@@ -191,6 +191,14 @@ export interface CampaignCreate {
   brief?: string
 }
 
+export interface CampaignUpdate {
+  name?: string
+  icp?: string
+  pain_points?: string
+  offer?: string
+  brief?: string | null
+}
+
 // Document types
 export interface Document {
   id: string

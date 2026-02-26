@@ -21,8 +21,9 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./data/copywrite.db"
     upload_dir: str = "./data/uploads"
     
-    # Server
+    # Server (Railway uses PORT env var)
     backend_port: int = 8000
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     
     # LLM Settings
     claude_model: str = "claude-sonnet-4-20250514"  # Writing
@@ -53,6 +54,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"  # Ignore extra env vars (e.g. Railway's PORT)
 
 
 @lru_cache()

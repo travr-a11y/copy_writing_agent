@@ -1,32 +1,29 @@
-# Git
-.git
-.gitignore
-
-# Frontend
+# Dependencies
 frontend/node_modules
 frontend/dist
-frontend/.vite
-
-# Backend
-backend/venv
 backend/__pycache__
 backend/**/__pycache__
-backend/data
-backend/*.db
-backend/*.log
+*.pyc
+.venv
+venv
+env
 
-# IDE
-.idea
+# Git and IDE
+.git
+.gitignore
+.cursor
 .vscode
-*.swp
-*.swo
-
-# Docs
 *.md
-!README.md
 
-# Misc
-.DS_Store
-*.log
+# Env (never bundle secrets)
 .env
 .env.*
+!.env.example
+
+# Test and dev
+*.test.*
+*.spec.*
+__tests__
+.pytest_cache
+.coverage
+htmlcov

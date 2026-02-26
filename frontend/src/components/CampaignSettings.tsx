@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Save, Loader2 } from 'lucide-react'
 import { campaignApi } from '../api/client'
-import type { Campaign, CampaignCreate } from '../types'
+import type { Campaign, CampaignUpdate } from '../types'
 
 interface CampaignSettingsProps {
   campaign: Campaign
@@ -17,7 +17,7 @@ export default function CampaignSettings({ campaign, campaignId }: CampaignSetti
   const [brief, setBrief] = useState(campaign.brief || '')
 
   const updateMutation = useMutation({
-    mutationFn: (data: Partial<CampaignCreate>) => campaignApi.update(campaignId, data),
+    mutationFn: (data: CampaignUpdate) => campaignApi.update(campaignId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['campaign', campaignId] })
       queryClient.invalidateQueries({ queryKey: ['gap-analysis', campaignId] })
@@ -26,10 +26,10 @@ export default function CampaignSettings({ campaign, campaignId }: CampaignSetti
 
   const handleSave = () => {
     updateMutation.mutate({
-      icp,
-      pain_points: painPoints,
-      offer,
-      brief: brief || undefined,
+      icp: icp ?? '',
+      pain_points: painPoints ?? '',
+      offer: offer ?? '',
+      brief: brief || null,
     })
   }
 

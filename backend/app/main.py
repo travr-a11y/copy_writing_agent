@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import campaigns, documents, generate, generate_stream, export, offers, icps
+from app.routers import campaigns, documents, generate, export
 
 
 settings = get_settings()
@@ -33,11 +33,11 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS middleware for frontend (dev + production domains)
+# CORS: allow configured origins (comma-separated) or * for production
+origins = [o.strip() for o in settings.cors_origins.split(",")] if settings.cors_origins else ["*"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_origin_regex=r"https://.*\.(railway\.app|up\.railway\.app)",
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,10 +47,12 @@ app.add_middleware(
 app.include_router(campaigns.router, prefix="/api/campaigns", tags=["Campaigns"])
 app.include_router(documents.router, prefix="/api/documents", tags=["Documents"])
 app.include_router(generate.router, prefix="/api", tags=["Generate"])
-app.include_router(generate_stream.router, prefix="/api", tags=["Generate"])
 app.include_router(export.router, prefix="/api", tags=["Export"])
-app.include_router(offers.router, prefix="/api/offers", tags=["Offers"])
-app.include_router(icps.router, prefix="/api/icps", tags=["ICPs"])
+
+# Serve frontend static files in production (when frontend/dist exists)
+_frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+if _frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(_frontend_dist), html=True), name="frontend")
 
 
 @app.get("/api/health")
@@ -63,12 +65,6 @@ async def health_check():
 async def schema_version():
     """Get current schema version for Chroma compatibility."""
     return {"schema_version": 1, "csv_version": 1}
-
-
-# Serve frontend static files in production (when frontend/dist exists)
-_frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
-if _frontend_dist.exists():
-    app.mount("/", StaticFiles(directory=str(_frontend_dist), html=True), name="static")
 
 
 if __name__ == "__main__":
